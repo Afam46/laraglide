@@ -30,10 +30,7 @@
                 />
             </div>
 
-            <div
-                class="flex-1 overflow-y-auto p-6 space-y-4"
-                v-if="messages"
-            >
+            <div class="flex-1 overflow-y-auto p-6 space-y-4">
 
                 <div
                     v-for="message in messages" :key="message.id"
@@ -178,7 +175,10 @@ const getGlobalChatMessages = async () =>{
 const formatTime = (dateString) => {
 
     const date = new Date(dateString)
-    return date.toLocaleTimeString()
+    return date.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+    })
 }
 
 const deleteMessage = async (id) => {

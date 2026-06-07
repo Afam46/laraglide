@@ -20,6 +20,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'last_seen_at'
+    ];
+
+    protected $appends = [
+        'is_online'
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_seen_at' => 'datetime',
     ];
 
     protected $hidden = [
@@ -50,5 +60,11 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function getIsOnlineAttribute(): bool
+    {
+        return $this->last_seen_at &&
+            $this->last_seen_at->gt(now()->subMinutes(5));
     }
 }

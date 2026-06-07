@@ -6,6 +6,7 @@ import Register from '../pages/Register.vue'
 import Profile from '../pages/Profile.vue'
 import Friends from '../pages/Friends.vue'
 import Messages from '../pages/Messages.vue'
+import Search from '../pages/Search.vue'
 
 const routes = [
     { path: '/', component: Home, meta: { auth: true } },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/register', component: Register, meta: { guest: true }  },
     { path: '/profile', component: Profile, meta: { auth: true }  },
     { path: '/friends', component: Friends, meta: { auth: true }  },
+    { path: '/search', component: Search, meta: { auth: true }  },
     { path: '/messages', component: Messages, meta: { auth: true }  },
 ]
 

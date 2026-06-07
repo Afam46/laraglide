@@ -17,6 +17,10 @@
                         Друзья
                     </RouterLink>
 
+                    <RouterLink to="/search" class="hover:text-blue-400">
+                        Все ползователи
+                    </RouterLink>
+
                     <RouterLink to="/messages" class="hover:text-blue-400">
                         Личные чаты
                     </RouterLink>

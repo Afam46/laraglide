@@ -14,11 +14,9 @@ class GlobalChatController extends Controller
         return GlobalMessage::query()
             ->where('chat_id', null)
             ->with('user')
-            ->latest()
-            ->take(50)
-            ->get()
-            ->reverse()
-            ->values();
+            ->orderBy('created_at')
+            ->limit(50)
+            ->get();
     }
 
     public function store(Request $request)
@@ -39,6 +37,10 @@ class GlobalChatController extends Controller
     public function delete(int $id)
     {
         $message = GlobalMessage::findOrFail($id);
+
+        if ($message->user_id !== Auth::id()) {
+            abort(403);
+        }
 
         $message->delete();
     }
