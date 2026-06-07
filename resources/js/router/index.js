@@ -8,15 +8,42 @@ import Friends from '../pages/Friends.vue'
 import Messages from '../pages/Messages.vue'
 
 const routes = [
-    { path: '/', component: Home },
-    { path: '/login', component: Login },
-    { path: '/register', component: Register },
-    { path: '/profile', component: Profile },
-    { path: '/friends', component: Friends },
-    { path: '/messages', component: Messages },
+    { path: '/', component: Home, meta: { auth: true } },
+    { path: '/login', component: Login, meta: { guest: true }  },
+    { path: '/register', component: Register, meta: { guest: true }  },
+    { path: '/profile', component: Profile, meta: { auth: true }  },
+    { path: '/friends', component: Friends, meta: { auth: true }  },
+    { path: '/messages', component: Messages, meta: { auth: true }  },
 ]
 
 export default createRouter({
     history: createWebHistory(),
     routes,
+})
+
+import { useAuth } from '../composables/useAuth'
+import router from '.'
+
+router.beforeEach(async (to, from, next) => {
+
+    const token = localStorage.getItem('token')
+
+    const { getUser } = useAuth()
+
+    const user = await getUser()
+
+    if (to.meta.auth && !user) {
+
+        return next('/login')
+
+    }
+
+    if (to.meta.guest && user) {
+
+        return next('/')
+
+    }
+
+    next()
+
 })

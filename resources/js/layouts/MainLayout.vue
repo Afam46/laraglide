@@ -27,6 +27,7 @@
 
                     <div class="ml-auto flex gap-4">
                         <RouterLink
+                            v-if="!user"
                             to="/login"
                             class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700"
                         >
@@ -34,11 +35,19 @@
                         </RouterLink>
 
                         <RouterLink
+                            v-if="!user"
                             to="/register"
                             class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500"
                         >
                             Регистрация
                         </RouterLink>
+                        <button
+                            v-if="user"
+                            class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500"
+                            @click="logout"
+                        >
+                            Выход
+                        </button>
                     </div>
 
                 </div>
@@ -51,3 +60,10 @@
 
     </div>
 </template>
+
+<script setup>
+import { useAuth } from '../composables/useAuth'
+
+const { user } = useAuth()
+const { logout } = useAuth()
+</script>
