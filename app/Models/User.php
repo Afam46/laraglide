@@ -16,6 +16,18 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            $user->profile()->create([
+                'avatar' => null,
+                'bio' => null,
+                'birth_date' => null,
+                'city' => null,
+            ]);
+        });
+    }
+
     protected $fillable = [
         'name',
         'email',
@@ -24,7 +36,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'is_online'
+        'is_online',
     ];
 
     protected $casts = [

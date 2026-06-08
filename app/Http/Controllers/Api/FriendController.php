@@ -14,19 +14,30 @@ class FriendController extends Controller
         $friends = Friend::with([
             'sender',
             'receiver'
-        ])->where(function ($q) {
+        ])
+        ->where(function ($q) {
 
             $q->where('sender_id', Auth::id())
             ->orWhere('receiver_id', Auth::id());
 
-        })->where('status', 'accepted')->get();
+        })
+        ->where('status', 'accepted')
+        ->get();
 
         return $friends->map(function ($friend) {
 
-            return $friend->sender_id === Auth::id()
+            $user = $friend->sender_id === Auth::id()
                 ? $friend->receiver
                 : $friend->sender;
 
+            return [
+                'friendship_id' => $friend->id,
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'is_online' => $user->is_online,
+                'profile' => $user->profile,
+            ];
         });
     }
 

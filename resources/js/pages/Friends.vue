@@ -1,96 +1,25 @@
 <template>
     <MainLayout>
 
-        <h1 class="text-3xl font-bold mb-6">
-            Друзья
-        </h1>
+        <div class="space-y-12">
 
-        <div class="grid md:grid-cols-3 gap-4">
+            <FriendsList
+                :friends="friends"
+                @delete="deleteFriend"
+                @start-chat="startChat"
+            />
 
-            <div
-                v-for="friend in friends" :key="friend.id"
-                class="bg-slate-900 rounded-xl p-4"
-            >
-                <div class="font-semibold">
-                    {{ friend.name }}
-                </div>
-                <p>
-                    {{ friend.is_online ? 'online' : 'offline' }}
-                </p>
+            <PendingFriend
+                :pending-friends="pendingFriends"
+                @accept="accept"
+                @delete="deleteFriend"
+            />
 
-                <button
-                    class="mt-3 bg-blue-600 px-3 py-2 rounded cursor-pointer"
-                >
-                    Написать
-                </button>
-                <button
-                    @click.prevent="deleteFriend(friend.id)"
-                    class="mt-3 bg-red-600 px-3 py-2 rounded cursor-pointer"
-                >
-                    Удалить
-                </button>
-            </div>
-
-        </div>
-
-        <h1 class="text-3xl font-bold mb-6">
-            Заявки
-        </h1>
-
-        <div class="grid md:grid-cols-3 gap-4">
-
-            <div
-                v-for="pendingFriend in pendingFriends" :key="pendingFriend.id"
-                class="bg-slate-900 rounded-xl p-4"
-            >
-                <div class="font-semibold">
-                    {{ pendingFriend.sender.name }}
-                </div>
-                <p>
-                    {{ pendingFriend.sender.is_online ? 'online' : 'offline' }}
-                </p>
-
-                <button
-                    @click.prevent="accept(pendingFriend.id)"
-                    class="mt-3 bg-blue-600 px-3 py-2 rounded cursor-pointer"
-                >
-                    Принять
-                </button>
-                <button
-                    @click.prevent="deleteFriend(pendingFriend.id)"
-                    class="mt-3 bg-red-600 px-3 py-2 rounded cursor-pointer"
-                >
-                    Отклонить
-                </button>
-            </div>
-
-        </div>
-
-        <h1 class="text-3xl font-bold mb-6">
-            Ваши заявки
-        </h1>
-
-        <div class="grid md:grid-cols-3 gap-4">
-
-            <div
-                v-for="outgoingRequest in outgoingRequests" :key="outgoingRequest.id"
-                class="bg-slate-900 rounded-xl p-4"
-            >
-                <div class="font-semibold">
-                    {{ outgoingRequest.receiver.name }}
-                </div>
-                <p>
-                    {{ outgoingRequest.receiver.is_online ? 'online' : 'offline' }}
-                </p>
-
-                <button
-                    @click.prevent="deleteFriend(outgoingRequest.id)"
-                    class="mt-3 bg-red-600 px-3 py-2 rounded cursor-pointer"
-                >
-                    Отменить
-                </button>
-            </div>
-
+            <OutgoingRequest
+                :outgoing-requests="outgoingRequests"
+                @delete="deleteFriend"
+            />
+        
         </div>
 
     </MainLayout>
@@ -98,83 +27,63 @@
 
 <script setup>
 import MainLayout from '../layouts/MainLayout.vue'
-import axios from 'axios';
-import { ref, onMounted } from 'vue';
 
-const friends = ref(null)
-const pendingFriends = ref(null)
-const outgoingRequests = ref(null)
+import FriendsList from '../layouts/friends/FriendsList.vue'
+import PendingFriend from '../layouts/friends/PendingFriend.vue'
+import OutgoingRequest from '../layouts/friends/OutgoingRequest.vue'
+
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
+import router from '../router'
+
+const friends = ref([])
+const pendingFriends = ref([])
+const outgoingRequests = ref([])
 
 const getFriends = async () => {
-
-    try{
-        const res = await axios.get('/api/friends')
-
-        friends.value = res.data;
-
-    }catch(error){
-
-        console.log(error)
-    }
+    const res = await axios.get('/api/friends')
+    friends.value = res.data
 }
 
 const getPendingFriends = async () => {
-
-    try{
-        const res = await axios.get('/api/friends/pending')
-
-        pendingFriends.value = res.data;
-
-    }catch(error){
-
-        console.log(error)
-    }
+    const res = await axios.get('/api/friends/pending')
+    pendingFriends.value = res.data
 }
 
 const getOutgoingRequests = async () => {
-    try{
-        const res = await axios.get('/api/friends/outgoing')
+    const res = await axios.get('/api/friends/outgoing')
+    outgoingRequests.value = res.data
+}
 
-        outgoingRequests.value = res.data;
+const loadData = async () => {
 
-    }catch(error){
-
-        console.log(error)
-    }
+    await Promise.all([
+        getFriends(),
+        getPendingFriends(),
+        getOutgoingRequests()
+    ])
 }
 
 const accept = async (id) => {
-    try{
-        await axios.post(`/api/friends/${id}/accept`)
 
-        getFriends()
-        getPendingFriends()
-        getOutgoingRequests()
+    await axios.post(`/api/friends/${id}/accept`)
 
-    }catch(error){
-
-        console.log(error)
-    }
+    await loadData()
 }
 
 const deleteFriend = async (id) => {
-    try{
-        await axios.delete(`/api/friends/${id}`)
 
-        getFriends()
-        getPendingFriends()
-        getOutgoingRequests()
+    await axios.delete(`/api/friends/${id}`)
 
-    }catch(error){
-
-        console.log(error)
-    }
+    await loadData()
 }
 
-onMounted(() => {
-    getFriends()
-    getPendingFriends()
-    getOutgoingRequests()
-})
+const startChat = async (friendId) => {
 
+    await axios.post(`/api/chats/create/${friendId}`)
+
+    router.push('/messages')
+}
+
+onMounted(loadData)
 </script>

@@ -135,8 +135,8 @@
 
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
-import Messages from '../pages/Messages.vue';
-import { useAuth } from '../composables/useAuth.js';
+import Messages from '../../pages/Messages.vue';
+import { useAuth } from '../../composables/useAuth.js';
 
 const { user } = useAuth()
 

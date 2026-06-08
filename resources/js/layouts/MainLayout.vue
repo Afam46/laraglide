@@ -25,7 +25,7 @@
                         Личные чаты
                     </RouterLink>
 
-                    <RouterLink to="/profile" class="hover:text-blue-400">
+                    <RouterLink :to="'/profile?id='+user.id" class="hover:text-blue-400">
                         Профиль
                     </RouterLink>
 

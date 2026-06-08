@@ -28,4 +28,16 @@ class UserController extends Controller
 
         return User::whereNotIn('id', $excludedIds)->where('id', '!=', Auth::id())->get();
     }
+
+    public function show(int $id)
+    {
+        $user = User::findOrFail($id);
+
+        return $user->load('profile');
+    }
+
+    public function onlineIndex()
+    {
+        return User::all()->where('is_online', true)->select('id','name');
+    }
 }

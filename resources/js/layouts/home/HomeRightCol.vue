@@ -19,8 +19,7 @@
             <div class="space-y-3">
 
                 <div
-                    v-for="i in 12"
-                    :key="i"
+                    v-for="friend in friends" :key="friend.id"
                     class="
                     flex items-center gap-3
                     bg-slate-800
@@ -41,13 +40,11 @@
                         <div
                             class="font-medium"
                         >
-                            User{{ i }}
+                            {{ friend.name }}
                         </div>
 
                         <div
-                            class="
-                            text-xs
-                            text-emerald-400"
+                            class="text-xs text-emerald-400" 
                         >
                             online
                         </div>
@@ -61,3 +58,30 @@
         </div>
     </div>
 </template>
+
+<script setup>
+
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
+
+const friends = ref(null)
+
+const getOnlineFriends = async () => {
+
+    try{
+
+        const res = await axios.get('/api/users/online')
+
+        friends.value = res.data
+
+    }catch(error){
+
+        console.log(error)
+    }
+}
+
+onMounted(() => {
+    getOnlineFriends()
+})
+
+</script>

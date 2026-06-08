@@ -25,7 +25,7 @@
 <script setup>
 
 import MainLayout from '../layouts/MainLayout.vue'
-import HomeRightCol from '../layouts/HomeRightCol.vue';
-import GlobalChat from '../layouts/GlobalChat.vue';
+import HomeRightCol from '../layouts/home/HomeRightCol.vue';
+import GlobalChat from '../layouts/home/GlobalChat.vue';
 
 </script>
