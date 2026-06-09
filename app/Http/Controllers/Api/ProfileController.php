@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -13,19 +14,36 @@ class ProfileController extends Controller
     {
         $request->validate([
             'bio' => 'nullable|string|max:1000',
-            'birth_date' => 'nullable|date',
             'city' => 'nullable|string|max:255',
-            'avatar' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'avatar' => 'nullable|image|max:2048'
         ]);
-        
-        $user = Auth::user();
-        $profile = $user->profile;
-        
-        $profile->update([
-            'bio' => $request->bio,
-            'birth_date' => $request->birth_date,
-            'city' => $request->city,
-            'avatar' => $request->avatar,
+
+        $profile = Auth::user()->profile;
+
+        if (!$profile) {
+            $profile = Profile::create([
+                'user_id' => Auth::id()
+            ]);
+        }
+
+        if ($request->hasFile('avatar')) {
+
+            if ($profile->avatar) {
+                Storage::disk('public')->delete($profile->avatar);
+            }
+
+            $profile->avatar = '/storage/' . $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $profile->bio = $request->bio;
+        $profile->city = $request->city;
+        $profile->birth_date = $request->birth_date;
+
+        $profile->save();
+
+        return response()->json([
+            'message' => 'Профиль обновлен'
         ]);
     }
 }

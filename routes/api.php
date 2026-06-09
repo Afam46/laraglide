@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum', UpdateLastSeen::class])->group(function () {
     Route::get('/users/online', [UserController::class, 'onlineIndex']);
     Route::get('/users/show/{id}', [UserController::class, 'show']);
 
-    Route::put('/profiles/update', [ProfileController::class, 'update']);
+    Route::post('/profiles/update', [ProfileController::class, 'update']);
 
     Route::get('/friends', [FriendController::class, 'index']);
     Route::get('/friends/pending', [FriendController::class, 'pendingIndex']);

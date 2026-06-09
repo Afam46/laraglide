@@ -43,18 +43,18 @@ class FriendController extends Controller
 
     public function pendingIndex()
     {
-        return Friend::with('sender')
-            ->where('receiver_id', Auth::id())
-            ->where('status', 'pending')
-            ->get();
+        return Friend::with(['sender.profile'])
+        ->where('receiver_id', Auth::id())
+        ->where('status', 'pending')
+        ->get();
     }
 
     public function outgoingRequests()
     {
-        return Friend::with('receiver')
-            ->where('sender_id', Auth::id())
-            ->where('status', 'pending')
-            ->get();
+        return Friend::with(['receiver.profile'])
+        ->where('sender_id', Auth::id())
+        ->where('status', 'pending')
+        ->get();
     }
 
     public function request(int $id)

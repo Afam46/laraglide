@@ -26,7 +26,7 @@ class UserController extends Controller
 
         })->unique();
 
-        return User::whereNotIn('id', $excludedIds)->where('id', '!=', Auth::id())->get();
+        return User::with('profile')->whereNotIn('id', $excludedIds)->where('id', '!=', Auth::id())->get();
     }
 
     public function show(int $id)

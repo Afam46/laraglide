@@ -60,14 +60,15 @@
 
                     <div class="relative">
 
-                        <div
+                        <img
                             class="
                                 w-16 h-16
                                 rounded-full
                                 bg-gradient-to-br
-                                from-blue-500
-                                to-blue-700
+                                border-slate-900
+                                bg-slate-800
                             "
+                            :src="user.profile.avatar"
                         />
 
                         <div
